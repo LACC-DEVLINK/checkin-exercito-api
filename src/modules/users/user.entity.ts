@@ -1,48 +1,28 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-} from 'typeorm';
+import { User as PrismaUser, $Enums } from '@prisma/client';
 
-export enum UserRole {
-  ADMIN = 'admin',
-  OPERATOR = 'operator',
-  SUPERVISOR = 'supervisor',
-}
+// Re-exportar os tipos do Prisma
+export type UserRole = $Enums.UserRole;
+export const UserRole = $Enums.UserRole;
+export type User = PrismaUser;
 
-@Entity('users')
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
+export class UserEntity implements PrismaUser {
+  id: number;
   email: string;
-
-  @Column()
   password: string;
-
-  @Column()
   name: string;
-
-  @Column({
-    type: 'enum',
-    enum: UserRole,
-    default: UserRole.OPERATOR,
-  })
-  role: UserRole;
-
-  @Column({ default: true })
+  role: $Enums.UserRole;
   isActive: boolean;
-
-  @CreateDateColumn()
   createdAt: Date;
-
-  @UpdateDateColumn()
   updatedAt: Date;
-
-  @DeleteDateColumn()
   deletedAt: Date | null;
+
+  constructor(partial: Partial<PrismaUser>) {
+    Object.assign(this, partial);
+  }
+
+  // Método para excluir a senha ao retornar o usuário
+  toSafeObject(): Omit<PrismaUser, 'password'> {
+    const { password, ...result } = this;
+    return result;
+  }
 }
