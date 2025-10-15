@@ -1,16 +1,14 @@
-import 'reflect-metadata';
-import { 
-  IsEmail, 
-  IsString, 
-  IsOptional, 
-  IsEnum, 
-  MinLength, 
+import {
+  IsEmail,
+  IsString,
+  IsOptional,
+  IsEnum,
+  MinLength,
   MaxLength,
   IsNotEmpty,
-  IsBoolean 
+  IsBoolean,
 } from 'class-validator';
-import { $Enums } from '@prisma/client';
-import type { User } from '@prisma/client';
+import { UserRole } from '@prisma/client'; // ✅ Use esta importação
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'Nome é obrigatório' })
@@ -30,8 +28,11 @@ export class CreateUserDto {
   password: string;
 
   @IsOptional()
-  @IsEnum($Enums.UserRole, { message: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR' })
-  role?: $Enums.UserRole;
+  @IsEnum(UserRole, {
+    // ✅ Use UserRole em vez de $Enums.UserRole
+    message: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR',
+  })
+  role?: UserRole;
 
   @IsOptional()
   @IsBoolean({ message: 'isActive deve ser um booleano' })
@@ -56,14 +57,24 @@ export class UpdateUserDto {
   password?: string;
 
   @IsOptional()
-  @IsEnum($Enums.UserRole, { message: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR' })
-  role?: $Enums.UserRole;
+  @IsEnum(UserRole, {
+    message: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR',
+  })
+  role?: UserRole;
 
   @IsOptional()
   @IsBoolean({ message: 'isActive deve ser um booleano' })
   isActive?: boolean;
 }
 
-// Usar o tipo do Prisma sem a senha
-export type UserResponseDto = Omit<User, 'password'>;
-
+// DTO de resposta (sem senha)
+export class UserResponseDto {
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}

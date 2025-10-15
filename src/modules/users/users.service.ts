@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { $Enums } from '@prisma/client';
 import type { User } from '@prisma/client';
@@ -21,7 +25,10 @@ export class UsersService {
 
     // Hash da senha
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password,
+      saltRounds,
+    );
 
     // Criar usuário
     const user = await this.prisma.user.create({
@@ -87,7 +94,10 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
     // Verificar se o usuário existe
     await this.findOne(id);
 
@@ -97,7 +107,10 @@ export class UsersService {
     // Se a senha foi fornecida, fazer o hash
     if (updateUserDto.password) {
       const saltRounds = 10;
-      updateData.password = await bcrypt.hash(updateUserDto.password, saltRounds);
+      updateData.password = await bcrypt.hash(
+        updateUserDto.password,
+        saltRounds,
+      );
     }
 
     // Verificar se o email já está em uso por outro usuário
@@ -174,7 +187,10 @@ export class UsersService {
 
   async isSupervisorOrAdmin(userId: number): Promise<boolean> {
     const user = await this.findOne(userId);
-    return user.role === $Enums.UserRole.ADMIN || user.role === $Enums.UserRole.SUPERVISOR;
+    return (
+      user.role === $Enums.UserRole.ADMIN ||
+      user.role === $Enums.UserRole.SUPERVISOR
+    );
   }
 
   // Método para buscar usuários por role
@@ -205,7 +221,7 @@ export class UsersService {
   // Método para ativar/desativar usuário
   async toggleActive(id: number): Promise<UserResponseDto> {
     const user = await this.findOne(id);
-    
+
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
