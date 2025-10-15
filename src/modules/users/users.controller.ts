@@ -33,13 +33,13 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<UserResponseDto> {
+  async findOne(@Param('id') id: number): Promise<UserResponseDto> {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
     return this.usersService.update(id, updateUserDto);
@@ -47,12 +47,12 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id') id: number): Promise<void> {
     return this.usersService.remove(id);
   }
 
   @Patch(':id/restore')
-  async restore(@Param('id') id: string): Promise<UserResponseDto> {
+  async restore(@Param('id') id: number): Promise<UserResponseDto> {
     return this.usersService.restore(id);
   }
 }

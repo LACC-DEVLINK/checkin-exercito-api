@@ -62,10 +62,10 @@ export class UsersService {
     return users as UserResponseDto[];
   }
 
-  async findOne(id: string): Promise<UserResponseDto> {
+  async findOne(id: number): Promise<UserResponseDto> {
     const user = await this.prisma.user.findFirst({
       where: {
-        id: parseInt(id),
+        id: id,
         deletedAt: null,
       },
     });
@@ -87,7 +87,7 @@ export class UsersService {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
     // Verificar se o usuário existe
     await this.findOne(id);
 
@@ -124,7 +124,7 @@ export class UsersService {
     return result as UserResponseDto;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     // Verificar se o usuário existe
     await this.findOne(id);
 
@@ -137,7 +137,7 @@ export class UsersService {
     });
   }
 
-  async restore(id: string): Promise<UserResponseDto> {
+  async restore(id: number): Promise<UserResponseDto> {
     // Verificar se o usuário existe (incluindo os deletados)
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -163,16 +163,16 @@ export class UsersService {
   }
 
   // Métodos auxiliares para verificação de permissões
-  async hasRole(userId: string, role: $Enums.UserRole): Promise<boolean> {
+  async hasRole(userId: number, role: $Enums.UserRole): Promise<boolean> {
     const user = await this.findOne(userId);
     return user.role === role;
   }
 
-  async isAdmin(userId: string): Promise<boolean> {
+  async isAdmin(userId: number): Promise<boolean> {
     return this.hasRole(userId, $Enums.UserRole.ADMIN);
   }
 
-  async isSupervisorOrAdmin(userId: string): Promise<boolean> {
+  async isSupervisorOrAdmin(userId: number): Promise<boolean> {
     const user = await this.findOne(userId);
     return user.role === $Enums.UserRole.ADMIN || user.role === $Enums.UserRole.SUPERVISOR;
   }
@@ -203,7 +203,7 @@ export class UsersService {
   }
 
   // Método para ativar/desativar usuário
-  async toggleActive(id: string): Promise<UserResponseDto> {
+  async toggleActive(id: number): Promise<UserResponseDto> {
     const user = await this.findOne(id);
     
     const updatedUser = await this.prisma.user.update({
