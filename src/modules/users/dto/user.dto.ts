@@ -66,6 +66,15 @@ export class UpdateUserDto {
   @IsBoolean({ message: 'isActive deve ser um booleano' })
   isActive?: boolean;
 }
+export class LoginDto {
+  @IsNotEmpty({ message: 'Email é obrigatório' })
+  @IsEmail({}, { message: 'Email deve ser válido' })
+  email: string;
+
+  @IsNotEmpty({ message: 'Senha é obrigatória' })
+  @IsString({ message: 'Senha deve ser uma string' })
+  password: string;
+}
 
 // DTO de resposta (sem senha)
 export class UserResponseDto {
