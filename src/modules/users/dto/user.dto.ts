@@ -8,71 +8,87 @@ import {
   IsNotEmpty,
   IsBoolean,
 } from 'class-validator';
-import { UserRole } from '@prisma/client'; // ✅ Use esta importação
+import { UserRole } from '@prisma/client';
+
+// Constantes para mensagens de validação
+const VALIDATION_MESSAGES = {
+  REQUIRED: {
+    NAME: 'Nome é obrigatório',
+    EMAIL: 'Email é obrigatório', 
+    PASSWORD: 'Senha é obrigatória',
+  },
+  FORMAT: {
+    STRING: 'deve ser uma string',
+    EMAIL: 'Email deve ser válido',
+    BOOLEAN: 'deve ser um booleano',
+    ROLE: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR',
+  },
+  LENGTH: {
+    NAME_MIN: 'Nome deve ter pelo menos 2 caracteres',
+    NAME_MAX: 'Nome deve ter no máximo 100 caracteres',
+    PASSWORD_MIN: 'Senha deve ter pelo menos 6 caracteres',
+    PASSWORD_MAX: 'Senha deve ter no máximo 100 caracteres',
+  },
+} as const;
 
 export class CreateUserDto {
-  @IsNotEmpty({ message: 'Nome é obrigatório' })
-  @IsString({ message: 'Nome deve ser uma string' })
-  @MinLength(2, { message: 'Nome deve ter pelo menos 2 caracteres' })
-  @MaxLength(100, { message: 'Nome deve ter no máximo 100 caracteres' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.NAME })
+  @IsString({ message: `Nome ${VALIDATION_MESSAGES.FORMAT.STRING}` })
+  @MinLength(2, { message: VALIDATION_MESSAGES.LENGTH.NAME_MIN })
+  @MaxLength(100, { message: VALIDATION_MESSAGES.LENGTH.NAME_MAX })
   name: string;
 
-  @IsNotEmpty({ message: 'Email é obrigatório' })
-  @IsEmail({}, { message: 'Email deve ser válido' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.EMAIL })
+  @IsEmail({}, { message: VALIDATION_MESSAGES.FORMAT.EMAIL })
   email: string;
 
-  @IsNotEmpty({ message: 'Senha é obrigatória' })
-  @IsString({ message: 'Senha deve ser uma string' })
-  @MinLength(6, { message: 'Senha deve ter pelo menos 6 caracteres' })
-  @MaxLength(100, { message: 'Senha deve ter no máximo 100 caracteres' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.PASSWORD })
+  @IsString({ message: `Senha ${VALIDATION_MESSAGES.FORMAT.STRING}` })
+  @MinLength(6, { message: VALIDATION_MESSAGES.LENGTH.PASSWORD_MIN })
+  @MaxLength(100, { message: VALIDATION_MESSAGES.LENGTH.PASSWORD_MAX })
   password: string;
 
   @IsOptional()
-  @IsEnum(UserRole, {
-    // ✅ Use UserRole em vez de $Enums.UserRole
-    message: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR',
-  })
+  @IsEnum(UserRole, { message: VALIDATION_MESSAGES.FORMAT.ROLE })
   role?: UserRole;
 
   @IsOptional()
-  @IsBoolean({ message: 'isActive deve ser um booleano' })
+  @IsBoolean({ message: `isActive ${VALIDATION_MESSAGES.FORMAT.BOOLEAN}` })
   isActive?: boolean;
 }
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsString({ message: 'Nome deve ser uma string' })
-  @MinLength(2, { message: 'Nome deve ter pelo menos 2 caracteres' })
-  @MaxLength(100, { message: 'Nome deve ter no máximo 100 caracteres' })
+  @IsString({ message: `Nome ${VALIDATION_MESSAGES.FORMAT.STRING}` })
+  @MinLength(2, { message: VALIDATION_MESSAGES.LENGTH.NAME_MIN })
+  @MaxLength(100, { message: VALIDATION_MESSAGES.LENGTH.NAME_MAX })
   name?: string;
 
   @IsOptional()
-  @IsEmail({}, { message: 'Email deve ser válido' })
+  @IsEmail({}, { message: VALIDATION_MESSAGES.FORMAT.EMAIL })
   email?: string;
 
   @IsOptional()
-  @IsString({ message: 'Senha deve ser uma string' })
-  @MinLength(6, { message: 'Senha deve ter pelo menos 6 caracteres' })
-  @MaxLength(100, { message: 'Senha deve ter no máximo 100 caracteres' })
+  @IsString({ message: `Senha ${VALIDATION_MESSAGES.FORMAT.STRING}` })
+  @MinLength(6, { message: VALIDATION_MESSAGES.LENGTH.PASSWORD_MIN })
+  @MaxLength(100, { message: VALIDATION_MESSAGES.LENGTH.PASSWORD_MAX })
   password?: string;
 
   @IsOptional()
-  @IsEnum(UserRole, {
-    message: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR',
-  })
+  @IsEnum(UserRole, { message: VALIDATION_MESSAGES.FORMAT.ROLE })
   role?: UserRole;
 
   @IsOptional()
-  @IsBoolean({ message: 'isActive deve ser um booleano' })
+  @IsBoolean({ message: `isActive ${VALIDATION_MESSAGES.FORMAT.BOOLEAN}` })
   isActive?: boolean;
 }
 export class LoginDto {
-  @IsNotEmpty({ message: 'Email é obrigatório' })
-  @IsEmail({}, { message: 'Email deve ser válido' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.EMAIL })
+  @IsEmail({}, { message: VALIDATION_MESSAGES.FORMAT.EMAIL })
   email: string;
 
-  @IsNotEmpty({ message: 'Senha é obrigatória' })
-  @IsString({ message: 'Senha deve ser uma string' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.PASSWORD })
+  @IsString({ message: `Senha ${VALIDATION_MESSAGES.FORMAT.STRING}` })
   password: string;
 }
 
