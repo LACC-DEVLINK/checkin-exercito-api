@@ -145,9 +145,9 @@ export class LoginDto {
 export class UserResponseDto {
   @ApiProperty({
     description: 'ID único do usuário',
-    example: 'clx1234567890',
+    example: 1234567890,
   })
-  id: string;
+  id: number;
 
   @ApiProperty({
     description: 'Nome completo do usuário',
