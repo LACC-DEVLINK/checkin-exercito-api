@@ -1,4 +1,4 @@
-# Dockerfile.dev (VERSÃO FINAL CORRIGIDA)
+# Use Node.js 18 LTS
 FROM node:18-alpine
 
 # Install dumb-init for proper signal handling
@@ -13,21 +13,18 @@ COPY package*.json ./
 # Install all dependencies (including dev)
 RUN npm ci && npm cache clean --force
 
-# Create user with same UID as host to avoid permission issues
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nestjs -u 1001 -G nodejs
-
 # Copy source code
 COPY . .
 
 # Generate Prisma client
 RUN npx prisma generate
 
-# Create dist directory and set permissions
-RUN mkdir -p /app/dist && \
-    chown -R nestjs:nodejs /app
+# Create a non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nestjs -u 1001
 
-# Switch to non-root user
+# Change ownership of the app directory
+RUN chown -R nestjs:nodejs /app
 USER nestjs
 
 # Expose port
