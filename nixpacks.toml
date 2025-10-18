@@ -6,6 +6,7 @@ cmds = ["npm ci"]
 
 [phases.build]
 cmds = [
+  "DATABASE_URL='postgresql://dummy:dummy@localhost:5432/dummy?schema=public' npx prisma generate",
   "npm run build"
 ]
 
