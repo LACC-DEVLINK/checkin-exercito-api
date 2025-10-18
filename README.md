@@ -25,63 +25,190 @@
 
 API para sistema de check-in do exército desenvolvida com [NestJS](https://github.com/nestjs/nest) framework TypeScript.
 
-## Configuração do Projeto
+## Pré-requisitos
+
+- Node.js 18+
+- Docker e Docker Compose
+- Git
+
+## Guia Rápido - Rodar Localmente
+
+### 1. Clone o projeto
 
 ```bash
-# 1. Instalar dependências
-$ npm install
-
-# 2. Configurar variáveis de ambiente
-$ cp .env.example .env
-
-# 3. Iniciar serviços do banco de dados
-$ docker-compose up -d
-
-# 4. Executar migrações do banco
-$ npx prisma migrate dev
+git clone https://github.com/LACC-DEVLINK/checkin-exercito-api.git
+cd checkin-exercito-api
 ```
 
-## Executar a aplicação
+### 2. Instale as dependências
 
 ```bash
-# modo desenvolvimento (com hot reload)
-$ npm run start:dev
-
-# modo produção
-$ npm run start:prod
-
-# modo debug
-$ npm run start:debug
+npm install
 ```
 
-## Executar testes
+### 3. Suba o banco de dados local
+
+```bash
+docker-compose -f docker-compose.dev.yml up db -d
+```
+
+Aguarde cerca de 10 segundos para o banco inicializar.
+
+### 4. Configure o arquivo .env
+
+```bash
+cp .env.example .env
+```
+
+O arquivo `.env` já vem configurado para desenvolvimento local. Não precisa alterar nada.
+
+### 5. Gere o Prisma Client
+
+```bash
+npx prisma generate
+```
+
+### 6. Execute as migrations
+
+```bash
+npx prisma migrate deploy
+```
+
+### 7. (Opcional) Popule com dados de teste
+
+```bash
+npm run seed
+```
+
+### 8. Inicie a aplicação
+
+```bash
+npm run start:dev
+```
+
+A API estará rodando em: **http://localhost:3000**
+
+## Comandos Úteis
+
+```bash
+# Ver o banco de dados no navegador
+npx prisma studio
+
+# Parar o banco de dados
+docker-compose -f docker-compose.dev.yml down
+
+# Resetar o banco (apaga tudo)
+docker-compose -f docker-compose.dev.yml down -v
+docker-compose -f docker-compose.dev.yml up db -d
+npx prisma migrate deploy
+```
+
+## Ambientes
+
+Este projeto trabalha com 2 ambientes separados:
+
+**LOCAL (Desenvolvimento):**
+- Banco PostgreSQL no Docker
+- Variáveis de ambiente no arquivo `.env` (não commitado)
+- Dados de teste isolados
+
+**PRODUÇÃO:**
+- Banco PostgreSQL na nuvem (Railway)
+- Variáveis configuradas no servidor
+- Deploy automático via Git
+
+**IMPORTANTE:** Nunca conecte no banco de produção localmente.
+
+## Executar Testes
 
 ```bash
 # testes unitários
-$ npm run test
+npm run test
 
 # testes end-to-end
-$ npm run test:e2e
+npm run test:e2e
 
 # cobertura de testes
-$ npm run test:cov
+npm run test:cov
+```
+
+## Executar Testes
+
+```bash
+# testes unitários
+npm run test
+
+# testes end-to-end
+npm run test:e2e
+
+# cobertura de testes
+npm run test:cov
 ```
 
 ## Serviços Disponíveis
 
 - **API**: http://localhost:3000
-- **pgAdmin**: http://localhost:8080 (admin@checkin.com / admin123)
-- **PostgreSQL**: localhost:5432 (postgres / postgres123)
-- **Redis**: localhost:6379
+- **Prisma Studio**: http://localhost:5555 (execute `npx prisma studio`)
+- **PostgreSQL Local**: localhost:5432
 
-## Rotas da API
+## Rotas Principais da API
 
-- `GET /` - Rota principal
-- `POST /users` - Criar usuário
+- `POST /auth/login` - Login de usuário
+- `POST /auth/register` - Registro de usuário
 - `GET /users` - Listar usuários
-- `GET /users/:id` - Buscar usuário por ID
-- `PATCH /users/:id` - Atualizar usuário
-- `DELETE /users/:id` - Deletar usuário
-- `PATCH /users/:id/restore` - Restaurar usuário
+- `POST /checkin` - Realizar check-in
+- `GET /checkin/history` - Histórico de check-ins
+
+## Problemas Comuns
+
+**Erro: "Cannot find module '@prisma/client'"**
+```bash
+npx prisma generate
+```
+
+**Banco não conecta:**
+```bash
+docker-compose -f docker-compose.dev.yml restart db
+```
+
+**Porta 5432 em uso:**
+```bash
+sudo systemctl stop postgresql
+```
+
+**Porta 3000 em uso:**
+```bash
+sudo lsof -t -i:3000 | xargs kill -9
+```
+
+## Segurança
+
+**NUNCA COMMITE:**
+- Arquivo `.env`
+- Credenciais de banco de dados
+- Chaves JWT ou API
+
+**PODE COMMITAR:**
+- `.env.example` (sem valores reais)
+- Código da aplicação
+- Migrations
+- Documentação
+
+## Documentação Adicional
+
+- [Guia de Desenvolvimento Completo](SETUP-DEV.md)
+- [Sistema de Autenticação](docs/AUTH_SYSTEM.md)
+- [Usuários de Teste](docs/USUARIOS_TESTE.md)
+
+## Deploy para Produção
+
+1. Configure as variáveis de ambiente no Railway
+2. Faça push para a branch principal:
+   ```bash
+   git add .
+   git commit -m "feat: nova funcionalidade"
+   git push origin main
+   ```
+3. O Railway fará o deploy automaticamente
 
 

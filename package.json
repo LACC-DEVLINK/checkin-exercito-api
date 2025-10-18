@@ -28,7 +28,19 @@
     "prisma:studio": "prisma studio",
     "docker:build": "docker-compose -f docker-compose.dev.yml build",
     "docker:shell": "docker-compose -f docker-compose.dev.yml exec app sh",
-    "docker:migrate": "docker-compose -f docker-compose.dev.yml exec app npm run prisma:migrate"
+    "docker:migrate": "docker-compose -f docker-compose.dev.yml exec app npm run prisma:migrate",
+    "dev:setup": "npm install && cp .env.example .env && echo '\n✅ Ambiente configurado! Edite o arquivo .env com suas credenciais.'",
+    "dev:db:up": "docker-compose -f docker-compose.dev.yml up -d postgres && echo '\n✅ Banco de dados local iniciado!'",
+    "dev:db:down": "docker-compose -f docker-compose.dev.yml down && echo '\n✅ Banco de dados local parado!'",
+    "dev:db:reset": "npm run dev:db:down && docker volume rm checkin-exercito-api_postgres_dev_data && npm run dev:db:up && sleep 5 && npm run prisma:migrate:dev",
+    "dev:migrate": "prisma migrate dev",
+    "dev:seed": "prisma db seed",
+    "dev:studio": "prisma studio",
+    "dev:full": "npm run dev:db:up && sleep 5 && npm run dev:migrate && npm run dev:seed && npm run start:dev",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:generate": "prisma generate",
+    "prisma:seed": "prisma db seed"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
