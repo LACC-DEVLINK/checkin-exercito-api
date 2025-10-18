@@ -16,22 +16,36 @@ async function bootstrap() {
 
   // Configuração do Swagger
   const config = new DocumentBuilder()
-    .setTitle('Checkin Exército API')
-    .setDescription('API para sistema de checkin do exército')
+    .setTitle('CheckIn Exército API')
+    .setDescription(`
+API para sistema de checkin do exército brasileiro
+
+## Como Autenticar
+
+1. **Faça login**: Use o endpoint POST /auth/login com email e senha
+2. **Copie o token**: Da resposta, copie apenas o valor de "accessToken"
+3. **Autorize**: Clique no botão "Authorize" acima
+4. **Cole o token**: No campo "Value", cole o token (SEM "Bearer")
+5. **Pronto**: Agora você pode usar todas as rotas protegidas!
+
+## Usuários de Teste
+- **ADMIN**: admin@exercito.mil.br / admin123
+- **SUPERVISOR**: supervisor@exercito.mil.br / supervisor123
+- **OPERATOR**: operator@exercito.mil.br / operator123
+    `)
     .setVersion('1.0')
-    .addTag('auth', 'Autenticação')
-    .addTag('users', 'Usuários')
-    .addTag('checkin', 'Check-in')
+    .addTag('Autenticação', 'Endpoints de autenticação e autorização')
+    .addTag('Usuários', 'Gerenciamento de usuários do sistema')
+    .addTag('Check-in', 'Operações de check-in')
+    .addTag('QR Codes', 'Geração e gerenciamento de QR codes')
     .addBearerAuth(
       {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
+        description: 'Digite o token JWT (obtido no login)',
       },
-      'JWT-auth',
+      'bearer',
     )
     .build();
 
