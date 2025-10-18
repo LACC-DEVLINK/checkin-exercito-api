@@ -5,11 +5,17 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Iniciando seed do banco de dados...');
-  console.log('🗑️  Limpando banco de dados...');
+  
+  // Verificar se já existem usuários
+  const existingUsersCount = await prisma.user.count();
+  
+  if (existingUsersCount > 0) {
+    console.log(`ℹ️  Banco já contém ${existingUsersCount} usuário(s). Pulando seed...`);
+    console.log('💡 Para recriar usuários, limpe o banco manualmente.');
+    return;
+  }
 
-  // Limpar todos os usuários
-  await prisma.user.deleteMany({});
-  console.log('✅ Banco limpo!');
+  console.log('📝 Criando usuários padrão...');
   console.log('');
 
   // Criar admin
@@ -26,9 +32,10 @@ async function main() {
   });
 
   console.log('✅ Admin criado com sucesso!');
-  console.log('Email:', admin.email);
-  console.log('Senha: admin123');
-  console.log('Role:', admin.role);
+  console.log('   Email:', admin.email);
+  console.log('   Senha: admin123');
+  console.log('   Role:', admin.role);
+  console.log('');
 
   // Criar supervisor
   const hashedPasswordSupervisor = await bcrypt.hash('supervisor123', 12);
@@ -44,8 +51,9 @@ async function main() {
   });
 
   console.log('✅ Supervisor criado com sucesso!');
-  console.log('Email:', supervisor.email);
-  console.log('Senha: supervisor123');
+  console.log('   Email:', supervisor.email);
+  console.log('   Senha: supervisor123');
+  console.log('');
 
   // Criar operator
   const hashedPasswordOperator = await bcrypt.hash('operator123', 12);
@@ -61,8 +69,10 @@ async function main() {
   });
 
   console.log('✅ Operador criado com sucesso!');
-  console.log('Email:', operator.email);
-  console.log('Senha: operator123');
+  console.log('   Email:', operator.email);
+  console.log('   Senha: operator123');
+  console.log('');
+  console.log('🎉 Seed concluído com sucesso!');
 }
 
 main()

@@ -18,20 +18,19 @@ import { AuthModule } from './modules/auth/auth.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        // A correção é adicionar "as any" aqui na propriedade 'type'
-        type: configService.get('DB_TYPE') as any, // <--- A SOLUÇÃO
+        type: configService.get('DB_TYPE') as any,
         host: configService.get<string>('DB_HOST'),
         port: configService.get<number>('DB_PORT'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
         entities: [QrCode],
-        synchronize: true, // Apenas para desenvolvimento
+        synchronize: true,
       }),
     }),
+    QrCodesModule,
     UsersModule,
     AuthModule,
-    QrCodesModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

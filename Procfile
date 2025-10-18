@@ -1,1 +1,1 @@
-web: npx prisma migrate deploy && npm run start:prod
+web: npm run start:migrate:prod
