@@ -150,7 +150,7 @@ export class UsersService {
     id: number,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    // ✅ mudou de string para number
+    // mudou de string para number
     // Verificar se o usuário existe
     await this.findOne(id);
 
@@ -225,7 +225,7 @@ export class UsersService {
    * Restaurar usuário deletado
    */
   async restore(id: number): Promise<UserResponseDto> {
-    // ✅ mudou de string para number
+    // mudou de string para number
     // Verificar se o usuário existe (incluindo os deletados)
     const user = await this.prisma.user.findUnique({
       where: { id },

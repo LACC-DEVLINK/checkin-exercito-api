@@ -33,6 +33,7 @@
     "@nestjs/core": "^11.1.6",
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^11.1.6",
+    "@nestjs/typeorm": "^11.0.0",
     "@prisma/client": "^6.17.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/uuid": "^10.0.0",
