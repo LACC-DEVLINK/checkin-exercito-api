@@ -32,6 +32,7 @@ model Military {
   situacao        String   @default("Ativo")
   profileImage    String?
   qrCode          String   @unique
+  qrCodeImage     String?  @db.Text
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   deletedAt       DateTime?

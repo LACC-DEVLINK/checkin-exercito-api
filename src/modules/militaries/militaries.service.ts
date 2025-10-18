@@ -1,24 +1,45 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { CreateMilitaryDto, UpdateMilitaryDto } from './dto/military.dto';
+import { QRCodeService } from './qrcode.service';
 
 @Injectable()
 export class MilitariesService {
-  constructor(private prisma: PrismaService) {}
-
-  private generateQRCode(): string {
-    return `QR-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`;
-  }
+  constructor(
+    private prisma: PrismaService,
+    private qrcodeService: QRCodeService,
+  ) {}
 
   async create(createMilitaryDto: CreateMilitaryDto) {
-    const qrCode = this.generateQRCode();
+    // Se não vier qrCode e qrCodeImage, gera automaticamente
+    let qrCode = createMilitaryDto.qrCode;
+    let qrCodeImage = createMilitaryDto.qrCodeImage;
+
+    if (!qrCode || !qrCodeImage) {
+      const tempId = `temp-${Date.now()}`;
+      const qrData = await this.qrcodeService.generateQRCode(
+        tempId,
+        createMilitaryDto.nomeCompleto,
+      );
+      qrCode = qrData.code;
+      qrCodeImage = qrData.image;
+    }
 
     return this.prisma.military.create({
       data: {
         ...createMilitaryDto,
         qrCode,
+        qrCodeImage,
       },
     });
+  }
+
+  /**
+   * Gera um novo QR Code sem salvar no banco
+   */
+  async generateQRCode(nomeCompleto: string): Promise<{ code: string; image: string }> {
+    const tempId = `temp-${Date.now()}`;
+    return this.qrcodeService.generateQRCode(tempId, nomeCompleto);
   }
 
   async findAll() {
