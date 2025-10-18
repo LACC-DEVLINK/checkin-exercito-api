@@ -21,8 +21,8 @@ npx prisma generate
 echo ""
 
 # Aguardar banco de dados
-echo "⏳ Aguardando PostgreSQL ficar disponível (60 segundos)..."
-sleep 60
+echo "⏳ Aguardando PostgreSQL ficar disponível..."
+sleep 5
 echo ""
 
 # Executar migrations com retry

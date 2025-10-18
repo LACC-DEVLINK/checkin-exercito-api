@@ -59,10 +59,12 @@ API para sistema de checkin do exército brasileiro
   // CORS
   app.enableCors();
 
-  await app.listen(3000);
+  // Usa a porta do ambiente (Railway) ou 3000 local
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
   
-  console.log(`🚀 Aplicação rodando em: http://localhost:3000`);
-  console.log(`📚 Swagger disponível em: http://localhost:3000/api/docs`);
+  console.log(`🚀 Aplicação rodando na porta: ${port}`);
+  console.log(`📚 Swagger disponível em: http://localhost:${port}/api/docs`);
 }
 
 void bootstrap();
