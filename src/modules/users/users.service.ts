@@ -377,4 +377,96 @@ export class UsersService {
       byRole,
     };
   }
+
+  /**
+   * Validar mudança de role
+   */
+  validateRoleChange(
+    currentUserRole: UserRole,
+    currentUserId: number,
+    targetUserId: number,
+    targetCurrentRole: UserRole,
+    newRole: UserRole,
+  ): void {
+    // OPERATOR não pode alterar role de ninguém
+    if (currentUserRole === UserRole.OPERATOR) {
+      throw new BadRequestException('Operadores não podem alterar roles');
+    }
+
+    // Ninguém pode alterar a própria role
+    if (currentUserId === targetUserId) {
+      throw new BadRequestException('Você não pode alterar sua própria role');
+    }
+
+    // SUPERVISOR só pode gerenciar OPERATORS
+    if (currentUserRole === UserRole.SUPERVISOR) {
+      if (targetCurrentRole !== UserRole.OPERATOR || newRole !== UserRole.OPERATOR) {
+        throw new BadRequestException(
+          'Supervisores só podem gerenciar operadores',
+        );
+      }
+    }
+  }
+
+  /**
+   * Validar exclusão de usuário
+   */
+  async validateDelete(
+    currentUserRole: UserRole,
+    currentUserId: number,
+    targetUserId: number,
+  ): Promise<void> {
+    // Apenas ADMIN pode deletar
+    if (currentUserRole !== UserRole.ADMIN) {
+      throw new BadRequestException('Apenas administradores podem deletar usuários');
+    }
+
+    // Não pode deletar a si mesmo
+    if (currentUserId === targetUserId) {
+      throw new BadRequestException('Você não pode deletar sua própria conta');
+    }
+
+    // Verificar se é o último ADMIN
+    const adminCount = await this.prisma.user.count({
+      where: {
+        role: UserRole.ADMIN,
+        isActive: true,
+        deletedAt: null,
+      },
+    });
+
+    const targetUser = await this.findOne(targetUserId);
+    if (targetUser.role === UserRole.ADMIN && adminCount <= 1) {
+      throw new BadRequestException(
+        'Não é possível deletar o último administrador do sistema',
+      );
+    }
+  }
+
+  /**
+   * Verificar se usuário pode atualizar outro usuário
+   */
+  canUpdateUser(
+    currentUserRole: UserRole,
+    currentUserId: number,
+    targetUserId: number,
+    targetRole: UserRole,
+  ): boolean {
+    // Pode atualizar a si mesmo
+    if (currentUserId === targetUserId) {
+      return true;
+    }
+
+    // ADMIN pode atualizar qualquer um
+    if (currentUserRole === UserRole.ADMIN) {
+      return true;
+    }
+
+    // SUPERVISOR pode atualizar OPERATORS
+    if (currentUserRole === UserRole.SUPERVISOR && targetRole === UserRole.OPERATOR) {
+      return true;
+    }
+
+    return false;
+  }
 }
