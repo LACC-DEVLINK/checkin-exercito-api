@@ -17,7 +17,10 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Login de usuário' })
+  @ApiOperation({ 
+    summary: 'Login de usuário',
+    description: 'Realiza autenticação com email e senha, retornando tokens JWT',
+  })
   @ApiResponse({
     status: 200,
     description: 'Login realizado com sucesso',
@@ -37,7 +40,10 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Renovar token de acesso' })
+  @ApiOperation({ 
+    summary: 'Renovar token de acesso',
+    description: 'Renova o access token usando um refresh token válido',
+  })
   @ApiResponse({
     status: 200,
     description: 'Token renovado com sucesso',
@@ -53,8 +59,11 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Obter perfil do usuário logado' })
+  @ApiBearerAuth('bearer')
+  @ApiOperation({ 
+    summary: 'Obter perfil do usuário logado',
+    description: 'Retorna os dados do usuário autenticado baseado no token JWT',
+  })
   @ApiResponse({
     status: 200,
     description: 'Perfil retornado com sucesso',
@@ -62,7 +71,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Não autorizado',
+    description: 'Token inválido ou não fornecido',
   })
   async getProfile(@CurrentUser() user: any): Promise<any> {
     return user;
@@ -71,11 +80,24 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Logout do usuário' })
+  @ApiBearerAuth('bearer')
+  @ApiOperation({ 
+    summary: 'Logout do usuário',
+    description: 'Invalida a sessão atual (cliente deve descartar os tokens)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Logout realizado com sucesso',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Logout realizado com sucesso' }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Token inválido ou não fornecido',
   })
   async logout(): Promise<{ message: string }> {
     return { message: 'Logout realizado com sucesso' };
