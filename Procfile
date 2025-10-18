@@ -1,1 +1,1 @@
-web: npm run start:migrate:prod
+web: bash scripts/start-production.sh

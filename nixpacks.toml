@@ -11,4 +11,4 @@ cmds = [
 ]
 
 [start]
-cmd = "npm run start:migrate:prod"
+cmd = "bash scripts/start-production.sh"
