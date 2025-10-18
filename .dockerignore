@@ -25,9 +25,9 @@ Thumbs.db
 .gitignore
 
 # Docker
-Dockerfile*
 docker-compose*.yml
-.dockerignore
+Dockerfile.dev*
+# NÃO ignore o Dockerfile principal!
 
 # Tests
 coverage
