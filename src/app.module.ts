@@ -8,6 +8,7 @@ import { PrismaService } from './common/prisma.service';
 import { QrCode } from './qr-codes/entities/qr-code.entity';
 import { QrCodesModule } from './qr-codes/qr-codes.module';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Global()
 @Module({
@@ -29,6 +30,7 @@ import { UsersModule } from './modules/users/users.module';
       }),
     }),
     UsersModule,
+    AuthModule,
     QrCodesModule,
   ],
   controllers: [AppController],
