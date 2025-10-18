@@ -5,6 +5,12 @@ echo "🚀 Iniciando aplicação em produção..."
 echo "📡 DATABASE_URL configurado: ${DATABASE_URL:0:30}..."
 echo ""
 
+# Gerar Prisma Client (necessário antes de qualquer operação)
+echo "🔧 Gerando Prisma Client..."
+npx prisma generate
+echo "✅ Prisma Client gerado!"
+echo ""
+
 # Aguardar 10 segundos para o banco de dados estar pronto
 echo "⏳ Aguardando banco de dados inicializar..."
 sleep 10
