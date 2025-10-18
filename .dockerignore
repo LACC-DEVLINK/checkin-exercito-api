@@ -34,7 +34,8 @@ coverage
 *.log
 
 # Prisma
-prisma/migrations/**/migration.sql
+# IMPORTANTE: NÃO ignore os arquivos de migration para o Railway funcionar!
+# prisma/migrations/**/migration.sql
 
 # Development files
 README.md
