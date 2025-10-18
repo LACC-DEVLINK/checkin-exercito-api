@@ -1,4 +1,16 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ExtractJwt, Strate  async validate(payload: JwtPayload) {
+    const user = await this.usersService.findOne(payload.sub);
+
+    if (!user || !user.isActive) {
+      throw new UnauthorizedException('Usuário não autorizado');
+    }
+
+    return {
+      id: payload.sub,
+      email: payload.email,
+      role: payload.role,
+    };
+  }rt-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -32,10 +44,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Usuário não autorizado');
     }
 
-    return {
+    const userObj = {
       id: payload.sub,
       email: payload.email,
       role: payload.role,
     };
+
+    console.log('JWT Strategy - User validated:', JSON.stringify(userObj));
+
+    return userObj;
   }
 }
