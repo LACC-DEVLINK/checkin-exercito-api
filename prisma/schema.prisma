@@ -21,6 +21,24 @@ model User {
   @@map("users")
 }
 
+model Military {
+  id              String   @id @default(uuid())
+  nomeCompleto    String
+  postoGrad       String
+  funcao          String
+  cnh             String?
+  companhiaSecao  String
+  veiculo         String?
+  situacao        String   @default("Ativo")
+  profileImage    String?
+  qrCode          String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  deletedAt       DateTime?
+
+  @@map("militaries")
+}
+
 enum UserRole {
   ADMIN
   OPERATOR

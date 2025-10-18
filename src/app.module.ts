@@ -6,15 +6,15 @@ import { AppService } from './app.service';
 import { PrismaService } from './common/prisma.service';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { MilitariesModule } from './modules/militaries/militaries.module';
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    // TODO: QrCodesModule precisa ser migrado para Prisma
-    // QrCodesModule,
     UsersModule,
     AuthModule,
+    MilitariesModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
