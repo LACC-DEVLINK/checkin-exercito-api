@@ -11,11 +11,31 @@ import {
 import { UserRole } from '@prisma/client'; // ✅ Use esta importação
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+const VALIDATION_MESSAGES = {
+  REQUIRED: {
+    NAME: 'Nome é obrigatório',
+    EMAIL: 'Email é obrigatório', 
+    PASSWORD: 'Senha é obrigatória',
+  },
+  FORMAT: {
+    STRING: 'deve ser uma string',
+    EMAIL: 'Email deve ser válido',
+    BOOLEAN: 'deve ser um booleano',
+    ROLE: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR',
+  },
+  LENGTH: {
+    NAME_MIN: 'Nome deve ter pelo menos 2 caracteres',
+    NAME_MAX: 'Nome deve ter no máximo 100 caracteres',
+    PASSWORD_MIN: 'Senha deve ter pelo menos 6 caracteres',
+    PASSWORD_MAX: 'Senha deve ter no máximo 100 caracteres',
+  },
+} as const;
+
 export class CreateUserDto {
-  @IsNotEmpty({ message: 'Nome é obrigatório' })
-  @IsString({ message: 'Nome deve ser uma string' })
-  @MinLength(2, { message: 'Nome deve ter pelo menos 2 caracteres' })
-  @MaxLength(100, { message: 'Nome deve ter no máximo 100 caracteres' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.NAME })
+  @IsString({ message: `Nome ${VALIDATION_MESSAGES.FORMAT.STRING}` })
+  @MinLength(2, { message: VALIDATION_MESSAGES.LENGTH.NAME_MIN })
+  @MaxLength(100, { message: VALIDATION_MESSAGES.LENGTH.NAME_MAX })
   @ApiProperty({
     description: 'Nome completo do usuário',
     example: 'João Silva',
@@ -24,8 +44,8 @@ export class CreateUserDto {
   })
   name: string;
 
-  @IsNotEmpty({ message: 'Email é obrigatório' })
-  @IsEmail({}, { message: 'Email deve ser válido' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.EMAIL })
+  @IsEmail({}, { message: VALIDATION_MESSAGES.FORMAT.EMAIL })
   @ApiProperty({
     description: 'Email do usuário',
     example: 'joao.silva@exercito.mil.br',
@@ -33,10 +53,10 @@ export class CreateUserDto {
   })
   email: string;
 
-  @IsNotEmpty({ message: 'Senha é obrigatória' })
-  @IsString({ message: 'Senha deve ser uma string' })
-  @MinLength(6, { message: 'Senha deve ter pelo menos 6 caracteres' })
-  @MaxLength(100, { message: 'Senha deve ter no máximo 100 caracteres' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.PASSWORD })
+  @IsString({ message: `Senha ${VALIDATION_MESSAGES.FORMAT.STRING}` })
+  @MinLength(6, { message: VALIDATION_MESSAGES.LENGTH.PASSWORD_MIN })
+  @MaxLength(100, { message: VALIDATION_MESSAGES.LENGTH.PASSWORD_MAX })
   @ApiProperty({
     description: 'Senha do usuário',
     example: 'minhasenha123',
@@ -52,9 +72,7 @@ export class CreateUserDto {
     default: UserRole.OPERATOR,
   })
   @IsOptional()
-  @IsEnum(UserRole, {
-    message: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR',
-  })
+  @IsEnum(UserRole, { message: VALIDATION_MESSAGES.FORMAT.ROLE })
   role?: UserRole;
 
   @ApiPropertyOptional({
@@ -63,7 +81,7 @@ export class CreateUserDto {
     default: true,
   })
   @IsOptional()
-  @IsBoolean({ message: 'isActive deve ser um booleano' })
+  @IsBoolean({ message: `isActive ${VALIDATION_MESSAGES.FORMAT.BOOLEAN}` })
   isActive?: boolean;
 }
 
@@ -75,9 +93,9 @@ export class UpdateUserDto {
     maxLength: 100,
   })
   @IsOptional()
-  @IsString({ message: 'Nome deve ser uma string' })
-  @MinLength(2, { message: 'Nome deve ter pelo menos 2 caracteres' })
-  @MaxLength(100, { message: 'Nome deve ter no máximo 100 caracteres' })
+  @IsString({ message: `Nome ${VALIDATION_MESSAGES.FORMAT.STRING}` })
+  @MinLength(2, { message: VALIDATION_MESSAGES.LENGTH.NAME_MIN })
+  @MaxLength(100, { message: VALIDATION_MESSAGES.LENGTH.NAME_MAX })
   name?: string;
 
   @ApiProperty({
@@ -86,7 +104,7 @@ export class UpdateUserDto {
     format: 'email',
   })
   @IsOptional()
-  @IsEmail({}, { message: 'Email deve ser válido' })
+  @IsEmail({}, { message: VALIDATION_MESSAGES.FORMAT.EMAIL })
   email?: string;
 
   @ApiProperty({
@@ -96,9 +114,9 @@ export class UpdateUserDto {
     maxLength: 100,
   })
   @IsOptional()
-  @IsString({ message: 'Senha deve ser uma string' })
-  @MinLength(6, { message: 'Senha deve ter pelo menos 6 caracteres' })
-  @MaxLength(100, { message: 'Senha deve ter no máximo 100 caracteres' })
+  @IsString({ message: `Senha ${VALIDATION_MESSAGES.FORMAT.STRING}` })
+  @MinLength(6, { message: VALIDATION_MESSAGES.LENGTH.PASSWORD_MIN })
+  @MaxLength(100, { message: VALIDATION_MESSAGES.LENGTH.PASSWORD_MAX })
   password?: string;
 
   @ApiPropertyOptional({
@@ -108,9 +126,7 @@ export class UpdateUserDto {
     default: UserRole.OPERATOR,
   })
   @IsOptional()
-  @IsEnum(UserRole, {
-    message: 'Role deve ser ADMIN, OPERATOR ou SUPERVISOR',
-  })
+  @IsEnum(UserRole, { message: VALIDATION_MESSAGES.FORMAT.ROLE })
   role?: UserRole;
 
   @ApiPropertyOptional({
@@ -119,7 +135,7 @@ export class UpdateUserDto {
     default: true,
   })
   @IsOptional()
-  @IsBoolean({ message: 'isActive deve ser um booleano' })
+  @IsBoolean({ message: `isActive ${VALIDATION_MESSAGES.FORMAT.BOOLEAN}` })
   isActive?: boolean;
 }
 export class LoginDto {
@@ -128,16 +144,16 @@ export class LoginDto {
     example: 'admin@exercito.mil.br',
     format: 'email',
   })
-  @IsNotEmpty({ message: 'Email é obrigatório' })
-  @IsEmail({}, { message: 'Email deve ser válido' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.EMAIL })
+  @IsEmail({}, { message: VALIDATION_MESSAGES.FORMAT.EMAIL })
   email: string;
 
   @ApiProperty({
     description: 'Senha do usuário para login',
     example: 'minhasenha123',
   })
-  @IsNotEmpty({ message: 'Senha é obrigatória' })
-  @IsString({ message: 'Senha deve ser uma string' })
+  @IsNotEmpty({ message: VALIDATION_MESSAGES.REQUIRED.PASSWORD })
+  @IsString({ message: `Senha ${VALIDATION_MESSAGES.FORMAT.STRING}` })
   password: string;
 }
 
