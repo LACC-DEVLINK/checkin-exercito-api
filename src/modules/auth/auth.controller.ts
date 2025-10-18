@@ -1,1 +1,83 @@
-// Auth Controller - TODO: Rotas de login/register
+import { Controller, Post, Get, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
+import { LoginDto, RefreshTokenDto, AuthResponseDto } from './dto/auth.dto';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { Public } from './decorators/public.decorator';
+import { UserResponseDto } from '../users/dto/user.dto';
+
+@ApiTags('Autenticação')
+@Controller('auth')
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Public()
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Login de usuário' })
+  @ApiResponse({
+    status: 200,
+    description: 'Login realizado com sucesso',
+    type: AuthResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Credenciais inválidas',
+  })
+  async login(
+    @Body() loginDto: LoginDto,
+    @CurrentUser() user: UserResponseDto,
+  ): Promise<AuthResponseDto> {
+    return this.authService.login(user);
+  }
+
+  @Public()
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Renovar token de acesso' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token renovado com sucesso',
+    type: AuthResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Token inválido ou expirado',
+  })
+  async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
+    return this.authService.refreshToken(refreshTokenDto.refreshToken);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obter perfil do usuário logado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Perfil retornado com sucesso',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Não autorizado',
+  })
+  async getProfile(@CurrentUser() user: any): Promise<any> {
+    return user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Logout do usuário' })
+  @ApiResponse({
+    status: 200,
+    description: 'Logout realizado com sucesso',
+  })
+  async logout(): Promise<{ message: string }> {
+    return { message: 'Logout realizado com sucesso' };
+  }
+}
