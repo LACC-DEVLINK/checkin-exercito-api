@@ -41,6 +41,16 @@ export class CreateMilitaryDto {
   @IsString()
   @IsOptional()
   profileImage?: string;
+
+  @ApiProperty({ description: 'Código do QR Code único', required: false })
+  @IsString()
+  @IsOptional()
+  qrCode?: string;
+
+  @ApiProperty({ description: 'Imagem do QR Code em base64', required: false })
+  @IsString()
+  @IsOptional()
+  qrCodeImage?: string;
 }
 
 export class UpdateMilitaryDto {
@@ -117,8 +127,26 @@ export class MilitaryResponseDto {
   qrCode: string;
 
   @ApiProperty()
+  qrCodeImage: string | null;
+
+  @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()
   updatedAt: Date;
+}
+
+export class GenerateQRCodeDto {
+  @ApiProperty({ description: 'Nome completo do militar' })
+  @IsString()
+  @IsNotEmpty()
+  nomeCompleto: string;
+}
+
+export class QRCodeResponseDto {
+  @ApiProperty({ description: 'Código único do QR Code' })
+  code: string;
+
+  @ApiProperty({ description: 'Imagem do QR Code em base64' })
+  image: string;
 }
