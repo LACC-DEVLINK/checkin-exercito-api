@@ -3,7 +3,8 @@ nixPkgs = ["nodejs_20", "openssl"]
 
 [phases.install]
 cmds = [
-  "npm ci --include=dev",
+  "npm ci --include=dev --no-cache",
+  "npm install prisma @prisma/client --save-dev",
   "npx prisma generate"
 ]
 
