@@ -1,3 +1,4 @@
+# docker-compose.dev.yml (CORRIGIDO)
 version: '3.8'
 
 services:
@@ -10,19 +11,22 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
     env_file:
       - .env.docker
     ports:
       - "3000:3000"
       - "9229:9229"  # Debug port
     volumes:
-      - .:/app
+      - .:/app:cached
       - /app/node_modules
+      - app_dist:/app/dist
     depends_on:
       - postgres
     networks:
       - checkin-network
     command: npm run start:dev
+    user: "1001:1001"
 
   # PostgreSQL Database
   postgres:
@@ -63,6 +67,8 @@ volumes:
   postgres_dev_data:
     driver: local
   pgadmin_dev_data:
+    driver: local
+  app_dist:
     driver: local
 
 networks:

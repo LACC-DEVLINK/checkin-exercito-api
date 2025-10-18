@@ -35,8 +35,10 @@
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/typeorm": "^11.0.0",
+    "@nestjs/swagger": "^11.2.1",
     "@prisma/client": "^6.17.1",
     "@types/bcryptjs": "^2.4.6",
+    "@types/uuid": "^10.0.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
@@ -49,6 +51,7 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "sharp": "^0.34.4",
+    "swagger-ui-express": "^5.0.1"
     "typeorm": "^0.3.27",
     "uuid": "^13.0.0"
   },
