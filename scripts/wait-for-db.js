@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Script para aguardar o banco de dados PostgreSQL estar disponível
  * Alternativa ao wait-for-db.sh para ambientes sem bash
